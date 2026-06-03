@@ -4,11 +4,9 @@ phases:
   pre_build:
     commands:
       - echo Obteniendo ID de cuenta de AWS de forma dinámica...
-      # Este comando extrae el ID de tu cuenta actual y lo guarda en la variable automáticamente
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       
       - echo Conectándose a Amazon ECR...
-      # Ahora la variable $AWS_ACCOUNT_ID está garantizada con tus 12 dígitos
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
       
       - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/netcoreapi-repo
@@ -16,31 +14,12 @@ phases:
 
   build:
     commands:
-      - echo Iniciando fase de pruebas automatizadas con generación de reportes...
-      # MODIFICACIÓN: Buscamos directamente el proyecto de pruebas saltándonos el .sln
-      - dotnet test **/NetCoreAPI.Tests.csproj --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
-      
-      - echo Pruebas superadas. Construyendo la imagen de Docker...
-      # Aquí también nos aseguramos de que el docker build apunte a donde está tu Dockerfile real
+      - echo Construyendo la imagen de Docker para la API...
+      # El comando docker build ahora corre directo porque el Stage previo ya garantizó la calidad
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
 
   post_build:
     commands:
-      - echo Construcción exitosa. Subiendo imagen a ECR...
+      - echo Empujando la imagen de Docker a Amazon ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      
-      - echo Creando archivo de definición para CodeDeploy...
-      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
-
-# NUEVA SECCIÓN: Esto es lo que lee AWS para dibujar los gráficos en tu consola
-reports:
-  dotnet-xunit-reports:
-    files:
-      - 'test_results.trx'
-    base-directory: './TestResults'
-    file-format: VisualStudioTrx
-
-artifacts:
-  files: 
-    - imageDetail.json
-    - appspec.yml
+      - echo ¡Proceso de empaquetado completado con éxito!
