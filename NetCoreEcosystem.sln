@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreAPI.Tests", "NetcoreApi.Tests\NetCoreAPI.Tests.csproj", "{6D5318B4-7A57-4479-B7FD-C7D615EA647E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreAPI.Tests", "NetCoreAPI.Tests\NetCoreAPI.Tests.csproj", "{6D5318B4-7A57-4479-B7FD-C7D615EA647E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreAPI", "NetcoreApi\NetCoreAPI.csproj", "{D77FAB9A-EC3A-408C-A540-CEC5F2FD3EE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreAPI", "NetCoreAPI\NetCoreAPI.csproj", "{D77FAB9A-EC3A-408C-A540-CEC5F2FD3EE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

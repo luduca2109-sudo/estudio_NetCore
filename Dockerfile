@@ -8,12 +8,12 @@ COPY *.sln ./
 # Sincronización exacta con las entrañas del .sln:
 # La API se busca en MAYÚSCULAS, los Tests se buscan en minúsculas
 COPY NetCoreAPI/*.csproj ./NetCoreAPI/
-COPY NetCoreAPI.Tests/*.csproj ./NetcoreApi.Tests/
+COPY NetCoreAPI.Tests/*.csproj ./NetCoreAPI.Tests/
 RUN dotnet restore
 
 # Copiar el resto del código respetando el mismo patrón
 COPY NetCoreAPI/. ./NetCoreAPI/
-COPY NetCoreAPI.Tests/. ./NetcoreApi.Tests/
+COPY NetCoreAPI.Tests/. ./NetCoreAPI.Tests/
 
 # Compilar y publicar la API usando la ruta en MAYÚSCULAS
 RUN dotnet publish NetCoreAPI/NetCoreAPI.csproj -c Release -o /out --no-restore
