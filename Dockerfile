@@ -2,21 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copiar la solución y los archivos de proyecto (.csproj) para restaurar dependencias
+# Copiar la solución
 COPY *.sln ./
 
-# Origen (Mayúsculas Reales de Git) -> Destino (Minúsculas para el .sln)
-COPY NetCoreAPI/*.csproj ./NetcoreApi/
+# Sincronización exacta con las entrañas del .sln:
+# La API se busca en MAYÚSCULAS, los Tests se buscan en minúsculas
+COPY NetCoreAPI/*.csproj ./NetCoreAPI/
 COPY NetCoreAPI.Tests/*.csproj ./NetcoreApi.Tests/
 RUN dotnet restore
 
-# CORRECCIÓN AQUÍ:
-# Origen (Mayúsculas Reales de Git) -> Destino (Minúsculas para el .sln)
-COPY NetCoreAPI/. ./NetcoreApi/
+# Copiar el resto del código respetando el mismo patrón
+COPY NetCoreAPI/. ./NetCoreAPI/
 COPY NetCoreAPI.Tests/. ./NetcoreApi.Tests/
 
-# Compilar y publicar la API en modo Release apuntando a la ruta corregida
-RUN dotnet publish NetcoreApi/NetCoreAPI.csproj -c Release -o /out --no-restore
+# Compilar y publicar la API usando la ruta en MAYÚSCULAS
+RUN dotnet publish NetCoreAPI/NetCoreAPI.csproj -c Release -o /out --no-restore
 
 # Etapa 2: Producción
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
