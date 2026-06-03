@@ -1,31 +1,39 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      dotnet: 8.0
-  
   pre_build:
     commands:
-      - echo Restaurando paquetes de toda la solución...
-      - dotnet restore
+      - echo Conectándose a Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/netcoreapi-repo
+      - IMAGE_TAG=latest
 
   build:
     commands:
-      - echo Compilando el ecosistema en modo Release...
-      - dotnet build --configuration Release --no-restore
-
-  test:
-    commands:
-      - echo Ejecutando suite de pruebas unitarias...
-      - dotnet test --configuration Release --no-build --verbosity normal
+      - echo Iniciando fase de pruebas automatizadas con generación de reportes...
+      # MODIFICADO: Agregamos el logger para generar el archivo .trx que AWS entiende
+      - dotnet test DashboardEcosystem.sln --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
+      
+      - echo Pruebas superadas. Construyendo la imagen de Docker...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
 
   post_build:
     commands:
-      - echo ¡Pruebas aprobadas! Publicando la Web API...
-      - dotnet publish Dashboard.API/Dashboard.API.csproj --configuration Release --output ./publish --no-build
+      - echo Construcción exitosa. Subiendo imagen a ECR...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      
+      - echo Creando archivo de definición para CodeDeploy...
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+
+# NUEVA SECCIÓN: Esto es lo que lee AWS para dibujar los gráficos en tu consola
+reports:
+  dotnet-xunit-reports:
+    files:
+      - 'test_results.trx'
+    base-directory: './TestResults'
+    file-format: VisualStudioTrx
 
 artifacts:
-  files:
-    - '**/*'
-  base-directory: ./publish
+  files: 
+    - imageDetail.json
+    - appspec.yml
