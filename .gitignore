@@ -1,0 +1,8 @@
+appsettings.Development.json
+.vscode/
+
+## Visual Studio / .NET Core
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
