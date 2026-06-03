@@ -17,10 +17,11 @@ phases:
   build:
     commands:
       - echo Iniciando fase de pruebas automatizadas con generación de reportes...
-      # MODIFICADO: Agregamos el logger para generar el archivo .trx que AWS entiende
-      - dotnet test NetCoreEcosystem.sln --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
+      # MODIFICACIÓN: Buscamos directamente el proyecto de pruebas saltándonos el .sln
+      - dotnet test **/NetCoreAPI.Tests.csproj --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
       
       - echo Pruebas superadas. Construyendo la imagen de Docker...
+      # Aquí también nos aseguramos de que el docker build apunte a donde está tu Dockerfile real
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
 
   post_build:
