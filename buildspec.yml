@@ -18,7 +18,7 @@ phases:
     commands:
       - echo Iniciando fase de pruebas automatizadas con generación de reportes...
       # MODIFICADO: Agregamos el logger para generar el archivo .trx que AWS entiende
-      - dotnet test DashboardEcosystem.sln --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
+      - dotnet test NetCoreEcosystem.sln --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
       
       - echo Pruebas superadas. Construyendo la imagen de Docker...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
