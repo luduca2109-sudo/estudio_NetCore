@@ -3,8 +3,14 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo Obteniendo ID de cuenta de AWS de forma dinámica...
+      # Este comando extrae el ID de tu cuenta actual y lo guarda en la variable automáticamente
+      - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      
       - echo Conectándose a Amazon ECR...
+      # Ahora la variable $AWS_ACCOUNT_ID está garantizada con tus 12 dígitos
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+      
       - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/netcoreapi-repo
       - IMAGE_TAG=latest
 
