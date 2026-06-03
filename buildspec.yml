@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 8.0
+  
+  pre_build:
+    commands:
+      - echo Restaurando paquetes de toda la solución...
+      - dotnet restore
+
+  build:
+    commands:
+      - echo Compilando el ecosistema en modo Release...
+      - dotnet build --configuration Release --no-restore
+
+  test:
+    commands:
+      - echo Ejecutando suite de pruebas unitarias...
+      - dotnet test --configuration Release --no-build --verbosity normal
+
+  post_build:
+    commands:
+      - echo ¡Pruebas aprobadas! Publicando la Web API...
+      - dotnet publish Dashboard.API/Dashboard.API.csproj --configuration Release --output ./publish --no-build
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: ./publish
