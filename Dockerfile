@@ -5,13 +5,13 @@ WORKDIR /app
 # Copiar la solución y los archivos de proyecto (.csproj) para restaurar dependencias
 COPY *.sln ./
 # CORRECCIÓN: Destinos en minúsculas para alinearse con el archivo .sln internamente
-COPY NetCoreAPI/*.csproj ./NetcoreApi/
-COPY NetCoreAPI.Tests/*.csproj ./NetcoreApi.Tests/
+COPY NetCoreApi/*.csproj ./NetcoreApi/
+COPY NetCoreApi.Tests/*.csproj ./NetcoreApi.Tests/
 RUN dotnet restore
 
 # Copiar todo el resto del código a las carpetas correspondientes
-COPY NetCoreAPI/. ./NetcoreApi/
-COPY NetCoreAPI.Tests/. ./NetcoreApi.Tests/
+COPY NetCoreApi/. ./NetcoreApi/
+COPY NetCoreApi.Tests/. ./NetcoreApi.Tests/
 
 # Compilar y publicar la API en modo Release apuntando a la ruta corregida
 RUN dotnet publish NetcoreApi/NetCoreAPI.csproj -c Release -o /out --no-restore
