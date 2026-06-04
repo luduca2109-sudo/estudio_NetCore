@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Iniciando la fase de pruebas automatizadas en Stage independiente..."
+      - dotnet test **/NetCoreAPI.Tests.csproj --configuration Release --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
+
+reports:
+  dotnet_xunit_reports: # Cambiado guion medio por guion bajo para evitar conflictos de sintaxis
+    files:
+      - 'test_results.trx'
+    base-directory: './TestResults'
+    file-format: 'VisualStudioTrx'
